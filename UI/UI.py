@@ -2,6 +2,8 @@ import pygame
 from UI.Scene import Scene
 from physics.objects import Object
 
+METRIC_TO_PIXEL_RATIO = 100
+
 
 class UI:
     def __init__(self, window: pygame.Surface, scene: Scene):
@@ -9,7 +11,7 @@ class UI:
         self.scene = scene
 
     def render(self):
-        objects = self.scene.get_objects()
+        objects = self.scene.objects
 
         if objects is not None:
             for obj in objects:
@@ -19,5 +21,14 @@ class UI:
         # TODO: Write func to render a shape on screen
 
         # TEMP FOR RENDERING A SINGLE CIRCLE. CHANGE FOR ACTUAL SHAPES
-        pygame.draw.circle(self.window, (0, 255, 0), shape.position, shape.radius)
+
+        # Flip y-axis so y=0 is on the bottom
+        pos = shape.position.copy() * METRIC_TO_PIXEL_RATIO
+        pos[1] = self.window.get_height() - pos[1]
+        pygame.draw.circle(
+            self.window,
+            (0, 255, 0),
+            pos,
+            shape.radius,
+        )
         pass

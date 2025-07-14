@@ -1,6 +1,7 @@
 from physics.objects import Object
 from physics.constants import GRAVITY_VECTOR
 import numpy as np
+from physics.vector_utils import add, scale
 
 
 class Scene:
@@ -22,7 +23,11 @@ class Scene:
         self.h = h
         self.w = w
 
-        self.objects = objects
+        self.objects = []
+
+        if objects is not None:
+            for obj in objects:
+                self.objects.append(obj)
 
         self.gravity = GRAVITY_VECTOR
 
@@ -37,5 +42,20 @@ class Scene:
     """
 
     def step(self, dt: float):
-        # TODO: Implement this
-        pass
+        # If no objects, do nothing
+        if len(self.objects) == 0:
+            return
+
+        for obj in self.objects:
+            # Update position
+            obj.position += scale(obj.velocity, dt)
+
+            # Update velocity
+            # F/m = a, a*dt = dv
+            force_v = np.sum(obj.forces, axis=0)
+            acceleration = scale(force_v, 1 / obj.mass)
+            obj.velocity += scale(acceleration, dt)
+
+            # Update forces
+            obj.forces = []
+            obj.forces.append(self.gravity)

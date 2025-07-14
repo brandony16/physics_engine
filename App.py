@@ -6,7 +6,7 @@ from physics.objects import Circle
 
 
 class App:
-    def __init__(self, width: int = 800, height: int = 800):
+    def __init__(self, width: int = 1200, height: int = 800):
         # Set up window
         pygame.init()
         self.window = pygame.display.set_mode((width, height))
@@ -16,7 +16,7 @@ class App:
         self.running = True
 
 
-        circle = Circle(1, [400, 400], [0, 0], 100)  # Temp circle
+        circle = Circle(1, [8, 8], [0, 0], 50)  # Temp circle
 
         # Init Scene and UI
         self.scene = Scene(
