@@ -3,11 +3,16 @@ from typing import Sequence
 
 
 class Object:
+    """
+    Basic Object superclass for simulation. Not directly used in sim, but it building block for other shapes.
+    """
+
     def __init__(
         self,
         mass: float,
         position: np.ndarray | list,
         velocity: np.ndarray | list,
+        forces: list[np.ndarray] | None = None,
     ):
         self._validate_mass(mass)
         self._validate_vector(position, name="Position")
@@ -16,6 +21,14 @@ class Object:
         self.mass = mass
         self.position = np.asarray(position, dtype=float)
         self.velocity = np.asarray(velocity, dtype=float)
+
+        # Build new forces list to avoid shared list issues
+        self.forces = []
+
+        if forces is not None:
+            for force in forces:
+                self._validate_vector(force, name="Forces")
+                self.forces.append(np.asarray(force, dtype=float))
 
     def _validate_mass(self, m):
         if not isinstance(m, (int, float)):
@@ -38,14 +51,19 @@ class Object:
 
 
 class Circle(Object):
+    """
+    A circle object
+    """
+
     def __init__(
         self,
         mass: float,
         position: np.ndarray | Sequence[float],
         velocity: np.ndarray | Sequence[float],
         radius: float,
+        forces: list[np.ndarray] | None = None,
     ):
-        super().__init__(mass, position, velocity)
+        super().__init__(mass, position, velocity, forces)
 
         self._validate_radius(radius)
         self.radius = radius

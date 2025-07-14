@@ -45,18 +45,34 @@ class ObjectTest(unittest.TestCase):
             Object(1, [0, 0], [[4], 0])
         self.assertEqual(str(e.exception), "Velocity must contain only numbers")
 
+    def test_invalid_forces(self):
+        # Wrong type
+        with self.assertRaises(TypeError) as e:
+            Object(1, [0, 0], [0, 0], [[1, 1], "invalid"])
+        self.assertEqual(str(e.exception), "Forces must be a list or numpy array")
+
+        # Too many dims
+        with self.assertRaises(ValueError) as e:
+            Object(1, [0, 0], [7, 4], [[3, 2], [2.4, 6.5], [1, 4, 7]])
+        self.assertEqual(str(e.exception), "Forces must have exactly two elements")
+
+        # Wrong type within
+        with self.assertRaises(TypeError) as e:
+            Object(1, [0, 0], [4, 0], [[None, 3]])
+        self.assertEqual(str(e.exception), "Forces must contain only numbers")
+
     # ----- VALID INPUTS -----
     def test_int_inputs(self):
-        obj = Object(4, [3, 2], [5, 8])
+        obj = Object(4, [3, 2], [5, 8], [[3, 2], [5, 7]])
 
     def test_negative_inputs(self):
-        obj = Object(4, [-3, 2], [5, -4])
+        obj = Object(4, [-3, 2], [5, -4], [[-1, 3], [-5, -2]])
 
     def test_float_inputs(self):
-        obj = Object(4.3, [2.6, 3.6], [1.6, -5.8])
+        obj = Object(4.3, [2.6, 3.6], [1.6, -5.8], [[1.4, 0.7], [2.5, 3.9]])
 
-    def test_mized_inputs(self):
-        obj = Object(9.0, [4, -3.7], [-2, 0.1])
+    def test_mixed_inputs(self):
+        obj = Object(9.0, [4, -3.7], [-2, 0.1], [[-3, -1.4], [9, 1.4]])
 
     # Add more tests as object gets methods
 

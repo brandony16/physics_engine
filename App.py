@@ -15,8 +15,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
 
-        # Do we want like real world units for the sim then convert them to
-        # pixels or do we want to just use pixels for everything?
+
         circle = Circle(1, [400, 400], [0, 0], 100)  # Temp circle
 
         # Init Scene and UI

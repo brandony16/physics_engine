@@ -1,15 +1,22 @@
 from physics.objects import Object
+from physics.constants import GRAVITY_VECTOR
+import numpy as np
 
 
 class Scene:
     """
+    Runs the simulation.
     Stores the objects in the simulation and updates them each step.
-    UI then gets the objects and renders them to the screen.
     """
 
-    def __init__(self, h: int, w: int, objects: list[Object] = None):
+    def __init__(
+        self,
+        h: int,
+        w: int,
+        objects: list[Object] = None,
+    ):
         """
-        h and w define the bounding box for the simulation. 
+        h and w define the bounding box for the simulation.
         Objects will stop if they try to exceed these bounds
         """
         self.h = h
@@ -17,11 +24,10 @@ class Scene:
 
         self.objects = objects
 
+        self.gravity = GRAVITY_VECTOR
+
     def add_object(self, obj: Object):
         self.objects.append(obj)
-
-    def get_objects(self):
-        return self.objects
 
     """
     Moves the simulation forward by a specified dt
