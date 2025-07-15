@@ -18,9 +18,9 @@ class App:
 
         circle = Circle(1, [8, 8], [0, 0], 50)  # Temp circle
 
-        # Init Scene and UI
+      # Init Scene and UI
         self.scene = Scene(
-            width, height, [circle]
+            12, 8, [circle]
         )  # Scene uses w and h as bounding box
         self.ui = UI(self.window, self.scene)
 

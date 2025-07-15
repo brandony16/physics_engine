@@ -50,6 +50,9 @@ class Scene:
             # Update position
             obj.position += scale(obj.velocity, dt)
 
+            # Clip position so objects dont leave the scene
+            obj.position = np.clip(obj.position, [0, 0], [self.w, self.h])
+
             # Update velocity
             # F/m = a, a*dt = dv
             force_v = np.sum(obj.forces, axis=0)
