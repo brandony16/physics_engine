@@ -1,6 +1,7 @@
 import pygame
 from UI.Scene import Scene
-from physics.objects import Object
+from physics.objects.Object import Object
+from physics.objects.Circle import Circle
 
 METRIC_TO_PIXEL_RATIO = 100
 
@@ -25,10 +26,12 @@ class UI:
         # Flip y-axis so y=0 is on the bottom
         pos = shape.position.copy() * METRIC_TO_PIXEL_RATIO
         pos[1] = self.window.get_height() - pos[1]
-        pygame.draw.circle(
-            self.window,
-            (0, 255, 0),
-            pos,
-            shape.radius,
-        )
+
+        if isinstance(shape, Circle):
+            pygame.draw.circle(
+                self.window,
+                (0, 255, 0),
+                pos,
+                shape.radius,
+            )
         pass

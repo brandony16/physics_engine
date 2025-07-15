@@ -2,8 +2,6 @@ import pygame
 from UI.Scene import Scene
 from UI.UI import UI
 
-from physics.objects import Circle
-
 
 class App:
     def __init__(self, width: int = 1200, height: int = 800):
@@ -15,13 +13,8 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
 
-
-        circle = Circle(1, [8, 8], [0, 0], 50)  # Temp circle
-
-      # Init Scene and UI
-        self.scene = Scene(
-            12, 8, [circle]
-        )  # Scene uses w and h as bounding box
+        # Init Scene and UI
+        self.scene = Scene(12, 8)  # Scene uses w and h as bounding box
         self.ui = UI(self.window, self.scene)
 
     def run(self):

@@ -5,4 +5,6 @@ import numpy as np
 # -------------------------------------------
 
 GRAVITY = 9.81
-GRAVITY_VECTOR = np.array([0.0, -GRAVITY]) 
+GRAVITY_VECTOR = np.array([0.0, -GRAVITY])
+
+INFINITE_MASS = float("inf")

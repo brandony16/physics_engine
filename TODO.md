@@ -2,7 +2,9 @@
 
 ## Physics Things
 - Add collision detection (with border of sim and other shapes)
-- Add rectangle shape
+  - Circle-Circle collision
+  - AABB (axis aligned bounding box)
+- Add rectangle shape (maybe same as AABB?)
 - Add way to calculate correct forces
 
 ## UI Things

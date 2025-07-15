@@ -1,19 +1,23 @@
 import numpy as np
-from typing import Sequence
 
 
 class Object:
     """
-    Basic Object superclass for simulation. Not directly used in sim, but it building block for other shapes.
+    Basic Object superclass for simulation. 
+    Building block for other shapes.
     """
 
     def __init__(
         self,
         mass: float,
         position: np.ndarray | list,
-        velocity: np.ndarray | list,
-        forces: list[np.ndarray] | None = None,
+        velocity: np.ndarray | list = None,
+        forces: list[np.ndarray | list] = None,
     ):
+        # Validation
+        if velocity is None:
+            velocity = [0, 0]
+
         self._validate_mass(mass)
         self._validate_vector(position, name="Position")
         self._validate_vector(velocity, name="Velocity")
@@ -48,28 +52,3 @@ class Object:
 
         if not all(isinstance(coord, (int, float)) for coord in v):
             raise TypeError(f"{name} must contain only numbers")
-
-
-class Circle(Object):
-    """
-    A circle object
-    """
-
-    def __init__(
-        self,
-        mass: float,
-        position: np.ndarray | Sequence[float],
-        velocity: np.ndarray | Sequence[float],
-        radius: float,
-        forces: list[np.ndarray] | None = None,
-    ):
-        super().__init__(mass, position, velocity, forces)
-
-        self._validate_radius(radius)
-        self.radius = radius
-
-    def _validate_radius(self, r):
-        if not isinstance(r, (int, float)):
-            raise TypeError("Radius must be a number")
-        if r < 0:  # Allow r=0 for point masses
-            raise ValueError("Radius must be positive")

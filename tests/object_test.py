@@ -1,5 +1,5 @@
 import unittest
-from physics.objects import Object
+from physics.objects.Object import Object
 
 
 class ObjectTest(unittest.TestCase):
@@ -73,6 +73,9 @@ class ObjectTest(unittest.TestCase):
 
     def test_mixed_inputs(self):
         obj = Object(9.0, [4, -3.7], [-2, 0.1], [[-3, -1.4], [9, 1.4]])
+    
+    def no_velocity(self):
+        obj = Object(9, [4.3, 0])
 
     # Add more tests as object gets methods
 
