@@ -4,6 +4,7 @@ import numpy as np
 from physics.vector_utils import add, scale
 from physics.objects.Circle import Circle
 from physics.objects.Wall import Wall
+from physics.collisions.shape_collisions import circle_circle_collision
 
 
 class Scene:
@@ -25,9 +26,10 @@ class Scene:
         self.w = w
         self.h = h
 
-        circle = Circle(1, 50, [w / 2, h / 2], [0, 0])  # Temp circle
+        circle = Circle(1, 0.1, [3 * w / 4, h / 2], [-5, 5])  # Temp circle
+        circle2 = Circle(1, 0.1, [w / 4, h / 2], [5, 5])  # Temp circle
 
-        self.objects = [circle]
+        self.objects = [circle, circle2]
 
         if objects is not None:
             for obj in objects:
@@ -35,16 +37,16 @@ class Scene:
 
         self.gravity = GRAVITY_VECTOR
 
-        # Create walls around sim
-        left_wall = Wall([-1, h / 2], [1, h / 2])
-        right_wall = Wall([w + 1, h / 2], [1, h / 2])
-        top_wall = Wall([w / 2, -1], [w / 2, 1])
-        bottom_wall = Wall([w / 2, h + 1], [w / 2, 1])
+        # # Create walls around sim
+        # left_wall = Wall([-1, h / 2], [1, h / 2])
+        # right_wall = Wall([w + 1, h / 2], [1, h / 2])
+        # top_wall = Wall([w / 2, -1], [w / 2, 1])
+        # bottom_wall = Wall([w / 2, h + 1], [w / 2, 1])
 
-        self.objects.append(left_wall)
-        self.objects.append(right_wall)
-        self.objects.append(top_wall)
-        self.objects.append(bottom_wall)
+        # self.objects.append(left_wall)
+        # self.objects.append(right_wall)
+        # self.objects.append(top_wall)
+        # self.objects.append(bottom_wall)
 
     def add_object(self, obj: Object):
         self.objects.append(obj)
@@ -61,18 +63,29 @@ class Scene:
         if len(self.objects) == 0:
             return
 
-        for obj in self.objects:
+        for i, obj in enumerate(self.objects):
             # Update position
             obj.position += scale(obj.velocity, dt)
 
+            did_collide = False
+            for j in range(i + 1, len(self.objects)):
+                obj2 = self.objects[j]
+                if circle_circle_collision(obj, obj2):
+                    did_collide = True
+                    # UPDATE TO MOMENTUM EQS
+                    obj.velocity = scale(obj.velocity, 0)
+                    obj2.velocity = scale(obj2.velocity, 0)
+
             # Clip position so objects dont leave the scene
+            # TEMP SOLUTION, add actual collision logic
             obj.position = np.clip(obj.position, [0, 0], [self.w, self.h])
 
             # Update velocity
             # F/m = a, a*dt = dv
-            force_v = np.sum(obj.forces, axis=0)
-            acceleration = scale(force_v, 1 / obj.mass)
-            obj.velocity += scale(acceleration, dt)
+            if not did_collide:
+                force_v = np.sum(obj.forces, axis=0)
+                acceleration = scale(force_v, 1 / obj.mass)
+                obj.velocity += scale(acceleration, dt)
 
             # Update forces
             obj.forces = []

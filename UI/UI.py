@@ -32,6 +32,6 @@ class UI:
                 self.window,
                 (0, 255, 0),
                 pos,
-                shape.radius,
+                shape.radius * METRIC_TO_PIXEL_RATIO,
             )
         pass
