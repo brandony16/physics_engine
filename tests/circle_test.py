@@ -1,5 +1,5 @@
 import unittest
-from physics.objects.circle import Circle
+from physics.objects.Circle import Circle
 
 
 class CircleTest(unittest.TestCase):

@@ -2,7 +2,7 @@ from physics.objects.Object import Object
 import numpy as np
 
 
-def getDistance(obj1: Object, obj2: Object) -> float:
+def get_distance(obj1: Object, obj2: Object) -> float:
     """
     Gets the Euclidean distance between two objects positions.
     """
