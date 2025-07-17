@@ -1,5 +1,5 @@
 import pygame
-import pygame_gui
+import pygame_gui as gui
 from UI.Scene import Scene
 from physics.objects.Object import Object
 from physics.objects.Circle import Circle
@@ -13,7 +13,7 @@ class UI:
         self.window = window
         self.scene = scene
 
-        self.manager = pygame_gui.UIManager(window.get_size())
+        self.manager = gui.UIManager(window.get_size())
 
         # UI Constants
         self.padding = 20
@@ -25,7 +25,7 @@ class UI:
         self.sidebar_bg = (0, 0, 40)
         self.sidebar_padding = 10
 
-        self.button_height = 30
+        self.button_height = 50
         self.button_gap = 10
 
         # Create scene and sidebar rects
@@ -46,9 +46,21 @@ class UI:
         self.panel = get_panel(self.manager, self.sidebar_rect)
         self.start_button = get_button(
             manager=self.manager,
-            rect=self._button_rect(0),
+            rect=self._button_rect(),
             container=self.panel,
             text="Start Simulation",
+        )
+        self.reset_button = get_button(
+            manager=self.manager,
+            rect=self._button_rect(),
+            container=self.panel,
+            text="Reset Simulation",
+        )
+        self.clear_button = get_button(
+            manager=self.manager,
+            rect=self._button_rect(),
+            container=self.panel,
+            text="Clear Scene",
         )
 
         # Correct scene width and height
@@ -64,9 +76,8 @@ class UI:
     def render(self):
         self.window.fill(self.bg_color)
 
-        # Draw scene, sidebar, and border
+        # Draw scene and border
         pygame.draw.rect(self.window, self.scene_bg, self.scene_rect)
-        pygame.draw.rect(self.window, self.sidebar_bg, self.sidebar_rect)
         pygame.draw.rect(self.window, self.border_color, self.scene_rect, width=2)
 
         objects = self.scene.objects
@@ -109,10 +120,13 @@ class UI:
 
         return int(screen_x), int(screen_y)
 
-    def _button_rect(self, num_buttons):
+    def _button_rect(self):
+        self.num_buttons = getattr(self, "num_buttons", -1) + 1
+
         return pygame.Rect(
             self.sidebar_padding,
-            self.sidebar_padding + num_buttons * (self.button_height + self.button_gap),
+            self.sidebar_padding
+            + self.num_buttons * (self.button_height + self.button_gap),
             self.sidebar_rect.width - 2 * self.sidebar_padding,
             self.button_height,
         )

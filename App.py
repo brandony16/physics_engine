@@ -1,4 +1,5 @@
 import pygame
+import pygame_gui as gui
 from UI.Scene import Scene
 from UI.UI import UI
 
@@ -12,6 +13,7 @@ class App:
 
         self.clock = pygame.time.Clock()
         self.running = True
+        self.sim_running = False
 
         # Init Scene and UI
         self.scene = Scene(12, 8)  # Scene uses w and h as bounding box
@@ -22,15 +24,25 @@ class App:
             dt = self.clock.tick(60) / 1000  # 60 FPS.
 
             for event in pygame.event.get():
-                self.ui.process_event(event)
-
                 if event.type == pygame.QUIT:
                     self.running = False
-                # else:
-                #     # TODO: implement UI buttons
-                #     continue
 
-            self.scene.step(dt)  # physics step
+                self.ui.process_event(event)
+
+                if event.type == gui.UI_BUTTON_PRESSED:
+                    if event.ui_element == self.ui.start_button:
+                        self.sim_running = True
+                        self.scene.save_objects()
+                    elif event.ui_element == self.ui.reset_button:
+                        self.sim_running = False
+                        self.scene.load_objects()
+                    elif event.ui_element == self.ui.clear_button:
+                        self.sim_running = False
+                        self.scene.reset()
+                
+            if self.sim_running:
+                self.scene.step(dt)  # physics step
+
             self.window.fill((0, 0, 0))  # Clear screen
             self.ui.render()  # Render scene
 
