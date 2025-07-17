@@ -26,10 +26,7 @@ class Scene:
         self.w = w
         self.h = h
 
-        circle = Circle(1, 0.1, [3 * w / 4, h / 2], [-5, 5])  # Temp circle
-        circle2 = Circle(1, 0.1, [w / 4, h / 2], [5, 5])  # Temp circle
-
-        self.objects = [circle, circle2]
+        self.objects = []
 
         if objects is not None:
             for obj in objects:

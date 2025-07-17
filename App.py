@@ -22,16 +22,21 @@ class App:
             dt = self.clock.tick(60) / 1000  # 60 FPS.
 
             for event in pygame.event.get():
+                self.ui.process_event(event)
+
                 if event.type == pygame.QUIT:
                     self.running = False
-                else:
-                    # TODO: implement UI buttons
-                    continue
+                # else:
+                #     # TODO: implement UI buttons
+                #     continue
 
             self.scene.step(dt)  # physics step
             self.window.fill((0, 0, 0))  # Clear screen
             self.ui.render()  # Render scene
-            pygame.display.flip()  # Show frame
+
+            self.ui.update(dt)
+            self.ui.draw()
+            pygame.display.update()  # Show frame
 
         pygame.quit()
 
