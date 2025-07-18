@@ -69,13 +69,21 @@ class UI:
             text="Reset Simulation",
         )
 
+        # Just doing circles for now, implement other shapes
+        self.add_circle = get_button(
+            manager=self.manager,
+            rect=self._button_rect(),
+            container=self.panel,
+            text="Add Circle",
+        )
+
         # Correct scene width and height
         self.scene.w = self.scene_rect.width / METRIC_TO_PIXEL_RATIO
         self.scene.h = self.scene_rect.height / METRIC_TO_PIXEL_RATIO
 
         # TEMP CIRCLES
-        circle = Circle(1, 0.5, [3 * self.scene.w / 4, self.scene.h / 2], [-5, 5])
-        circle2 = Circle(1, 0.5, [self.scene.w / 4, self.scene.h / 2], [5, 5])
+        circle = Circle(1, 0.5, [0, 0], [10, 0])
+        circle2 = Circle(1, 0.5, [self.scene.w, 0], [-10, 0])
         self.scene.add_object(circle)
         self.scene.add_object(circle2)
 

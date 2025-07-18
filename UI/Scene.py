@@ -1,10 +1,11 @@
 from physics.objects.Object import Object
 from physics.constants import GRAVITY_VECTOR
 import numpy as np
-from physics.vector_utils import add, scale
+from physics.vector_utils import scale
 from physics.objects.Circle import Circle
 from physics.objects.Wall import Wall
 from physics.collisions.shape_collisions import circle_circle_collision
+from physics.utils import get_normal
 import copy
 
 
@@ -36,6 +37,9 @@ class Scene:
         self.saved_objects = copy.deepcopy(self.objects)
 
         self.gravity = GRAVITY_VECTOR
+
+        # How elastic collisions are. 1.0 for fully elastic, 0 for inelastic
+        self.restitution = 1.0
 
         # # Create walls around sim
         # left_wall = Wall([-1, h / 2], [1, h / 2])
@@ -83,9 +87,7 @@ class Scene:
                 obj2 = self.objects[j]
                 if circle_circle_collision(obj, obj2):
                     did_collide = True
-                    # UPDATE TO MOMENTUM EQS
-                    obj.velocity = scale(obj.velocity, 0)
-                    obj2.velocity = scale(obj2.velocity, 0)
+                    self.handle_collision(obj, obj2)
 
             # Clip position so objects dont leave the scene
             # TEMP SOLUTION, add actual collision logic
@@ -101,3 +103,29 @@ class Scene:
             # Update forces
             obj.forces = []
             obj.forces.append(self.gravity)
+
+    def handle_collision(self, obj1: Object, obj2: Object):
+        norm = get_normal(obj1, obj2)
+        tangent = np.array([-norm[1], norm[0]])
+
+        # Get velocities in normal and tangent directions
+        v1, v2 = obj1.velocity, obj2.velocity
+        v1n = np.dot(v1, norm)
+        v1t = np.dot(v1, tangent)
+        v2n = np.dot(v2, norm)
+        v2t = np.dot(v2, tangent)
+
+        m1, m2, e = obj1.mass, obj2.mass, self.restitution
+        total_m = m1 + m2
+        vf1n = ((m1 - e * m2) * v1n / total_m) + (((1 + e) * m2) * v2n / total_m)
+        vf2n = (((1 + e) * m1) * v1n / total_m) + ((m2 - e * m1) * v2n / total_m)
+
+        # Tangent stays the same
+        vf1t = v1t
+        vf2t = v2t
+
+        vf1 = vf1n * norm + vf1t * tangent
+        vf2 = vf2n * norm + vf2t * tangent
+
+        obj1.velocity = vf1
+        obj2.velocity = vf2

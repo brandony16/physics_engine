@@ -5,7 +5,7 @@ from UI.UI import UI
 
 
 class App:
-    def __init__(self, width: int = 800, height: int = 600):
+    def __init__(self, width: int = 1200, height: int = 800):
         # Set up window
         pygame.init()
         self.window = pygame.display.set_mode((width, height))
@@ -49,6 +49,9 @@ class App:
                     elif event.ui_element == self.ui.clear_button:
                         self.sim_running = False
                         self.scene.reset()
+                    elif event.ui_element == self.ui.add_circle:
+                        self.sim_running = False
+                        # TODO: Implement adding circle
 
                     self.last_pressed = event.ui_element
 
