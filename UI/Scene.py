@@ -7,6 +7,7 @@ from physics.objects.Wall import Wall
 from physics.collisions.shape_collisions import circle_circle_collision
 import copy
 
+
 class Scene:
     """
     Runs the simulation.
@@ -31,7 +32,8 @@ class Scene:
         if objects is not None:
             for obj in objects:
                 self.objects.append(obj)
-        self.save_objects()
+
+        self.saved_objects = copy.deepcopy(self.objects)
 
         self.gravity = GRAVITY_VECTOR
 
@@ -48,6 +50,7 @@ class Scene:
 
     def add_object(self, obj: Object):
         self.objects.append(obj)
+        self.save_objects()
 
     def save_objects(self):
         self.saved_objects = copy.deepcopy(self.objects)

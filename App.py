@@ -5,7 +5,7 @@ from UI.UI import UI
 
 
 class App:
-    def __init__(self, width: int = 1200, height: int = 800):
+    def __init__(self, width: int = 800, height: int = 600):
         # Set up window
         pygame.init()
         self.window = pygame.display.set_mode((width, height))
@@ -14,6 +14,7 @@ class App:
         self.clock = pygame.time.Clock()
         self.running = True
         self.sim_running = False
+        self.last_pressed = None
 
         # Init Scene and UI
         self.scene = Scene(12, 8)  # Scene uses w and h as bounding box
@@ -29,17 +30,28 @@ class App:
 
                 self.ui.process_event(event)
 
-                if event.type == gui.UI_BUTTON_PRESSED:
+                # GUI button pressed & ignore repeat presses of same button
+                if (
+                    event.type == gui.UI_BUTTON_PRESSED
+                    and self.last_pressed != event.ui_element
+                ):
                     if event.ui_element == self.ui.start_button:
                         self.sim_running = True
-                        self.scene.save_objects()
+
+                        # Dont save objects if resuming from a pause
+                        if self.last_pressed != self.ui.pause_button:
+                            self.scene.save_objects()
+                    elif event.ui_element == self.ui.pause_button:
+                        self.sim_running = False
                     elif event.ui_element == self.ui.reset_button:
                         self.sim_running = False
                         self.scene.load_objects()
                     elif event.ui_element == self.ui.clear_button:
                         self.sim_running = False
                         self.scene.reset()
-                
+
+                    self.last_pressed = event.ui_element
+
             if self.sim_running:
                 self.scene.step(dt)  # physics step
 

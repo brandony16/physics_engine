@@ -13,7 +13,7 @@ class UI:
         self.window = window
         self.scene = scene
 
-        self.manager = gui.UIManager(window.get_size())
+        self.manager = gui.UIManager(window.get_size(), "./UI/theme.json")
 
         # UI Constants
         self.padding = 20
@@ -43,24 +43,30 @@ class UI:
             h - 2 * self.padding,
         )
 
-        self.panel = get_panel(self.manager, self.sidebar_rect)
+        self.panel = get_panel(self.manager, self.sidebar_rect, id="#sidebar")
         self.start_button = get_button(
             manager=self.manager,
             rect=self._button_rect(),
             container=self.panel,
             text="Start Simulation",
         )
-        self.reset_button = get_button(
+        self.pause_button = get_button(
             manager=self.manager,
             rect=self._button_rect(),
             container=self.panel,
-            text="Reset Simulation",
+            text="Pause Simulation",
         )
         self.clear_button = get_button(
             manager=self.manager,
             rect=self._button_rect(),
             container=self.panel,
             text="Clear Scene",
+        )
+        self.reset_button = get_button(
+            manager=self.manager,
+            rect=self._button_rect(),
+            container=self.panel,
+            text="Reset Simulation",
         )
 
         # Correct scene width and height
