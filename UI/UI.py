@@ -82,8 +82,8 @@ class UI:
         self.scene.h = self.scene_rect.height / METRIC_TO_PIXEL_RATIO
 
         # TEMP CIRCLES
-        circle = Circle(1, 0.5, [0, 0], [10, 0])
-        circle2 = Circle(1, 0.5, [self.scene.w, 0], [-10, 0])
+        circle = Circle(1, 0.5, [0, 3], [5, 0])
+        circle2 = Circle(1, 0.5, [self.scene.w, 3], [-5, 0])
         self.scene.add_object(circle)
         self.scene.add_object(circle2)
 
