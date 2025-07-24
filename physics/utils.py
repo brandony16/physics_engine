@@ -1,6 +1,5 @@
 from physics.objects.Object import Object
 import numpy as np
-import physics.vector_utils as v
 
 
 def get_distance(obj1: Object, obj2: Object) -> float:
@@ -10,7 +9,7 @@ def get_distance(obj1: Object, obj2: Object) -> float:
     pos1 = obj1.position
     pos2 = obj2.position
 
-    # dist = sqrt(dx^2 + dy^2)
+    # pythagorean theorem
     distance = np.sqrt(np.sum((pos1 - pos2) ** 2))
 
     return distance
@@ -22,6 +21,6 @@ def get_normal(obj1: Object, obj2: Object) -> np.ndarray:
 
     n = (pos2 - pos1) / ||pos2 - pos1||
     """
-    pos_diff = v.subtract(obj2.position, obj1.position)
+    pos_diff = obj2.position - obj1.position
 
     return pos_diff / np.linalg.norm(pos_diff)

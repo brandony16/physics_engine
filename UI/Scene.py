@@ -1,7 +1,6 @@
 from physics.objects.Object import Object
 from physics.constants import GRAVITY_VECTOR
 import numpy as np
-from physics.vector_utils import scale
 from physics.objects.Circle import Circle
 from physics.objects.Wall import Wall
 from physics.collisions.shape_collisions import circle_circle_collision
@@ -39,7 +38,7 @@ class Scene:
         self.gravity = GRAVITY_VECTOR
 
         # How elastic collisions are. 1.0 for fully elastic, 0 for inelastic
-        self.restitution = 0.1
+        self.restitution = 1.0
 
         # # Create walls around sim
         # left_wall = Wall([-1, h / 2], [1, h / 2])
@@ -82,8 +81,9 @@ class Scene:
 
         for i, obj in enumerate(self.objects):
             # Update position
-            obj.position += scale(obj.velocity, dt)
+            obj.position += obj.velocity * dt
 
+            # Check for collisions
             for j in range(i + 1, len(self.objects)):
                 obj2 = self.objects[j]
                 if circle_circle_collision(obj, obj2):
@@ -99,12 +99,12 @@ class Scene:
             # F/m = a, a*dt = dv
             if obj not in collided:
                 force_v = np.sum(obj.forces, axis=0)
-                acceleration = scale(force_v, 1 / obj.mass)
-                obj.velocity += scale(acceleration, dt)
+                acceleration = force_v / obj.mass
+                obj.velocity += acceleration * dt
 
             # Update forces
             obj.forces = []
-            # obj.forces.append(self.gravity)
+            obj.forces.append(self.gravity)
 
     def handle_collision(self, obj1: Object, obj2: Object):
         percent = 0.8
@@ -131,13 +131,9 @@ class Scene:
             vf1n = ((m1 - e * m2) * v1n / total_m) + (((1 + e) * m2) * v2n / total_m)
             vf2n = (((1 + e) * m1) * v1n / total_m) + ((m2 - e * m1) * v2n / total_m)
 
-            # Tangent stays the same
-            vf1t = v1t
-            vf2t = v2t
-
-            # Reconstruct complete velocities
-            vf1 = vf1n * norm + vf1t * tangent
-            vf2 = vf2n * norm + vf2t * tangent
+            # Reconstruct complete velocities (tangent velos are the same)
+            vf1 = vf1n * norm + v1t * tangent
+            vf2 = vf2n * norm + v2t * tangent
 
             obj1.velocity = vf1
             obj2.velocity = vf2
@@ -148,7 +144,7 @@ class Scene:
             inv_m2 = 0.0 if obj2.mass == float("inf") else 1.0 / obj2.mass
             inv_mass_sum = inv_m1 + inv_m2
 
-            # Move each object by its inverse mass. More mass means it will move less
+            # Move each object proportionally to 1 / mass
             correction = ((penetration - slop) / inv_mass_sum) * percent
             obj1.position -= norm * (correction * inv_m1)
             obj2.position += norm * (correction * inv_m2)

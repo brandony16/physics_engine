@@ -43,6 +43,7 @@ class UI:
             h - 2 * self.padding,
         )
 
+        # Create GUI buttons
         self.panel = get_panel(self.manager, self.sidebar_rect, id="#sidebar")
         self.start_button = get_button(
             manager=self.manager,
@@ -110,10 +111,6 @@ class UI:
         self.manager.draw_ui(self.window)
 
     def _renderShape(self, shape: Object):
-        # TODO: Write func to render a shape on screen
-
-        # TEMP FOR RENDERING A SINGLE CIRCLE. CHANGE FOR ACTUAL SHAPES
-
         if isinstance(shape, Circle):
             pygame.draw.circle(
                 self.window,
@@ -135,6 +132,9 @@ class UI:
         return int(screen_x), int(screen_y)
 
     def _button_rect(self):
+        """
+        Gets a new pygame rect for a button.
+        """
         self.num_buttons = getattr(self, "num_buttons", -1) + 1
 
         return pygame.Rect(
