@@ -91,9 +91,8 @@ class Scene:
                     collided.add(obj2)
                     self.handle_collision(obj, obj2)
 
-            # Clip position so objects dont leave the scene
-            # TEMP SOLUTION, add actual collision logic
-            obj.position = np.clip(obj.position, [0, 0], [self.w, self.h])
+            # Check for boundary collisions
+            self.handle_boundaries(obj)
 
             # Update velocity
             # F/m = a, a*dt = dv
@@ -148,3 +147,29 @@ class Scene:
             correction = ((penetration - slop) / inv_mass_sum) * percent
             obj1.position -= norm * (correction * inv_m1)
             obj2.position += norm * (correction * inv_m2)
+
+    def handle_boundaries(self, obj: Object):
+        for obj in self.objects:
+            if hasattr(obj, 'radius'):
+                r = obj.radius
+                pos = obj.position
+                vel = obj.velocity
+
+                # Left border wall
+                if pos[0] - r < 0:
+                    pos[0] = r
+                    vel[0] *= -self.restitution # Bouncing off wall with elasticity factor
+            
+                # Right border wall
+                if pos[0] + r > self.w:
+                    pos[0] = self.w - r
+                    vel[0] *= -self.restitution
+            
+                # Bottom border floor
+                if pos[1] - r < 0:
+                    pos[1] = r
+                    vel[1] *= -self.restitution
+            
+                if pos[1] + r > self.h:
+                    pos[1] = self.h - r
+                    vel[1] *= -self.restitution
