@@ -38,7 +38,7 @@ class Scene:
         self.gravity = GRAVITY_VECTOR
 
         # How elastic collisions are. 1.0 for fully elastic, 0 for inelastic
-        self.restitution = 1.0
+        self.restitution = 0.5
 
         # # Create walls around sim
         # left_wall = Wall([-1, h / 2], [1, h / 2])
@@ -77,33 +77,32 @@ class Scene:
         if len(self.objects) == 0:
             return
 
-        collided = set()
+        # Upate velocities, positions, and forces of all objects
+        for obj in self.objects:
+            force_v = np.sum(obj.forces, axis=0)
+            acceleration = force_v / obj.mass
+            obj.velocity += acceleration * dt
 
-        for i, obj in enumerate(self.objects):
-            # Update position
+            # Update position with new velocities
             obj.position += obj.velocity * dt
-
-            # Check for collisions
-            for j in range(i + 1, len(self.objects)):
-                obj2 = self.objects[j]
-                if circle_circle_collision(obj, obj2):
-                    collided.add(obj)
-                    collided.add(obj2)
-                    self.handle_collision(obj, obj2)
 
             # Check for boundary collisions
             self.handle_boundaries(obj)
 
-            # Update velocity
-            # F/m = a, a*dt = dv
-            if obj not in collided:
-                force_v = np.sum(obj.forces, axis=0)
-                acceleration = force_v / obj.mass
-                obj.velocity += acceleration * dt
-
             # Update forces
             obj.forces = []
             obj.forces.append(self.gravity)
+
+        # Find all collisions
+        collisions = []
+        for i, obj1 in enumerate(self.objects):
+            for obj2 in self.objects[i + 1 :]:
+                if circle_circle_collision(obj1, obj2):
+                    collisions.append((obj1, obj2))
+
+        # Handle collisions
+        for obj1, obj2 in collisions:
+            self.handle_collision(obj1, obj2)
 
     def handle_collision(self, obj1: Object, obj2: Object):
         percent = 0.8
@@ -150,7 +149,7 @@ class Scene:
 
     def handle_boundaries(self, obj: Object):
         for obj in self.objects:
-            if hasattr(obj, 'radius'):
+            if hasattr(obj, "radius"):
                 r = obj.radius
                 pos = obj.position
                 vel = obj.velocity
@@ -158,18 +157,20 @@ class Scene:
                 # Left border wall
                 if pos[0] - r < 0:
                     pos[0] = r
-                    vel[0] *= -self.restitution # Bouncing off wall with elasticity factor
-            
+                    vel[
+                        0
+                    ] *= -self.restitution  # Bouncing off wall with elasticity factor
+
                 # Right border wall
                 if pos[0] + r > self.w:
                     pos[0] = self.w - r
                     vel[0] *= -self.restitution
-            
+
                 # Bottom border floor
                 if pos[1] - r < 0:
                     pos[1] = r
                     vel[1] *= -self.restitution
-            
+
                 if pos[1] + r > self.h:
                     pos[1] = self.h - r
                     vel[1] *= -self.restitution
